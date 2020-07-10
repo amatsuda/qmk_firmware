@@ -37,6 +37,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define RAPC_KEYS KC_RALT, KC_RSFT, KC_MINS
 
+#define JP_MEISU KC_LANG2 // 英数 on macOS
+#define JP_MKANA KC_LANG1 // かな on macOS
+#define LOWER_MH LT(_LOWER, JP_MEISU)
+#define RAISE_HE LT(_RAISE, JP_MKANA)
+
+
 #ifdef RGBLIGHT_ENABLE
     #undef RGBLED_NUM
     #define RGBLIGHT_ANIMATIONS
