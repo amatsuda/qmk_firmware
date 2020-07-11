@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_FORCE_HOLD
 #define TAPPING_TERM 100
 
-// #define PERMISSIVE_HOLD
+#define PERMISSIVE_HOLD
 // #define RETRO_TAPPING
 
 #define RAPC_KEYS KC_RALT, KC_RSFT, KC_MINS
