@@ -23,7 +23,8 @@ enum custom_keycodes {
   RAISE,
   ADJUST,
   BACKLIT,
-  RGBRST
+  RGBRST,
+  COLN_SCLN
 };
 
 enum macro_keycodes {
@@ -35,7 +36,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_BSPC,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      CTL_T(KC_ESC),KC_A,  KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,\
+      CTL_T(KC_ESC),KC_A,  KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L,COLN_SCLN, KC_QUOT,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSPO,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_RSPC,\
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -164,6 +165,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   switch (keycode) {
+    case COLN_SCLN:
+      if (record->event.pressed) {
+        if (keyboard_report->mods & MOD_BIT(KC_LSFT)) {
+          unregister_code(KC_LSFT);
+          register_code(KC_SCLN);
+          unregister_code(KC_SCLN);
+          register_code(KC_LSFT);
+        } else {
+          register_code(KC_LSFT);
+          register_code(KC_SCLN);
+          unregister_code(KC_SCLN);
+          unregister_code(KC_LSFT);
+        }
+      }
+      return false;
     case QWERTY:
       if (record->event.pressed) {
         persistent_default_layer_set(1UL<<_QWERTY);
