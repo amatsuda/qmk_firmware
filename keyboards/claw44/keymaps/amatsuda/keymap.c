@@ -32,7 +32,6 @@ enum macro_keycodes {
 #define KC_R_ENT LT(_RAISE, KC_ENT) // raise
 #define GUI_JA LGUI_T(KC_LANG1) // cmd
 #define GUI_EN LGUI_T(KC_LANG2) // cmd
-#define KC_C_BS LCTL_T(KC_BSPC) // ctrl
 #define ALT_BS LALT_T(KC_BSPC) // alt
 #define CTL_ESC CTL_T(KC_ESC)
 
@@ -46,7 +45,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+---------+--------+---------+--------|   |--------+---------+--------+---------+--------+--------|
      KC_LSFT, KC_Z   , KC_X    , KC_C   , KC_V    , KC_B   ,     KC_N   , KC_M    , KC_COMM, KC_DOT  , KC_SLSH, KC_RSFT,
   //`--------+--------+---------+--------+---------+--------/   \--------+---------+--------+---------+--------+--------'
-                       ALT_BS  , GUI_EN , KC_L_SPC, KC_C_BS,     KC_C_BS, KC_R_ENT, GUI_JA , KC_UNDS
+                       ALT_BS  , GUI_EN , KC_L_SPC, LOWER  ,     RAISE  , KC_R_ENT, GUI_JA , KC_UNDS
   //                 `----------+--------+---------+--------'   `--------+---------+--------+---------'
   ),
 
