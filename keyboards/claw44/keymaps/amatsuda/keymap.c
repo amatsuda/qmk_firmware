@@ -23,6 +23,12 @@ enum custom_keycodes {
   COLN_SCLN
 };
 
+// Tap Dance declarations
+enum {
+  TD_LANG1,
+  TD_LANG2,
+};
+
 enum macro_keycodes {
   KC_SAMPLEMACRO,
 };
@@ -31,8 +37,8 @@ enum macro_keycodes {
 #define KC_RST RESET
 #define KC_L_SPC LT(_LOWER, KC_SPC) // lower
 #define KC_R_ENT LT(_RAISE, KC_ENT) // raise
-#define GUI_JA LGUI_T(KC_LANG1) // cmd
-#define GUI_EN LGUI_T(KC_LANG2) // cmd
+#define GUI_JA TD(TD_LANG1) // hold: cmd, double_tap: JA
+#define GUI_EN TD(TD_LANG2) // hold: cmd, double_tap: EN
 #define LOWER_EN LT(_LOWER, KC_LANG2) // lower
 #define RAISE_JA LT(_RAISE, KC_LANG1) // raise
 #define ALT_BS LALT_T(KC_BSPC) // alt
@@ -209,3 +215,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
+
+
+// Tap dance functions
+void dance_lang1_finished(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    if (state->pressed) register_code(KC_LGUI);
+  } else if (state->count == 2) register_code(KC_LANG1);
+}
+
+void dance_lang1_reset(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    unregister_code(KC_LGUI);
+  } else {
+    unregister_code(KC_LANG1);
+  }
+}
+
+void dance_lang2_finished(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    if (state->pressed) register_code(KC_LGUI);
+  } else if (state->count == 2) register_code(KC_LANG2);
+}
+
+void dance_lang2_reset(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    unregister_code(KC_LGUI);
+  } else {
+    unregister_code(KC_LANG2);
+  }
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+  [TD_LANG1] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lang1_finished, dance_lang1_reset),
+  [TD_LANG2] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lang2_finished, dance_lang2_reset),
+};
