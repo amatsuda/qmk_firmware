@@ -26,13 +26,24 @@ enum custom_keycodes {
 
 // Tap Dance declarations
 enum {
-  TD_LANG1,
-  TD_LANG2,
+  TD_LANG_LGUI
 };
 
 enum macro_keycodes {
   KC_SAMPLEMACRO,
 };
+
+typedef struct {
+  bool is_press_action;
+  uint8_t state;
+} tap;
+
+enum {
+  SINGLE_TAP = 1,
+  SINGLE_HOLD,
+  DOUBLE_TAP
+};
+
 
 #define _MOUSE 5
 
@@ -40,10 +51,7 @@ enum macro_keycodes {
 #define KC_RST RESET
 #define KC_L_SPC LT(_LOWER, KC_SPC) // lower
 #define KC_R_ENT LT(_RAISE, KC_ENT) // raise
-#define GUI_JA TD(TD_LANG1) // hold: cmd, double_tap: JA
-#define GUI_EN TD(TD_LANG2) // hold: cmd, double_tap: EN
-#define LOWER_EN LT(_LOWER, KC_LANG2) // lower
-#define RAISE_JA LT(_RAISE, KC_LANG1) // raise
+#define LANG_LGUI TD(TD_LANG_LGUI) // hold: cmd, single_tap: EN, double_tap: JA
 #define ALT_BS LALT_T(KC_BSPC) // alt
 #define CTL_ESC CTL_T(KC_ESC)
 #define PREV_TAB LGUI(KC_LBRC)  // previous Terminal tab
@@ -60,7 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+---------+--------+---------+--------|   |--------+---------+--------+---------+--------+--------|
      KC_LSPO, KC_Z   , KC_X    , KC_C   , KC_V    , KC_B   ,     KC_N   , KC_M    , KC_COMM, KC_DOT  , KC_SPC , KC_RSPC,
   //`--------+--------+---------+--------+---------+--------/   \--------+---------+--------+---------+--------+--------'
-                       ALT_BS  , GUI_EN , KC_L_SPC, LOWER  ,     MOUSE  , KC_R_ENT, GUI_JA , KC_UNDS
+                       ALT_BS  ,LANG_LGUI,KC_L_SPC, LOWER  ,     MOUSE  , KC_R_ENT, _______, KC_UNDS
   //                 `----------+--------+---------+--------'   `--------+---------+--------+---------'
   ),
 
@@ -241,36 +249,43 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 
+int cur_dance(qk_tap_dance_state_t *state) {
+  if (state->count == 1) {
+    if (state->interrupted || !state->pressed)  return SINGLE_TAP;
+    else return SINGLE_HOLD;
+  }
+  else if (state->count == 2) {
+    if (state->interrupted || !state->pressed)  return DOUBLE_TAP;
+    else return DOUBLE_TAP;
+  }
+  else return 8; //magic number. At some point this method will expand to work for more presses
+}
+
+static tap lang_tap_state = {
+  .is_press_action = true,
+  .state = 0
+};
+
+
 // Tap dance functions
-void dance_lang1_finished(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count == 1) {
-    if (state->pressed) register_code(KC_LGUI);
-  } else if (state->count == 2) register_code(KC_LANG1);
-}
-
-void dance_lang1_reset(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count == 1) {
-    unregister_code(KC_LGUI);
-  } else {
-    unregister_code(KC_LANG1);
+void dance_lang_finished(qk_tap_dance_state_t *state, void *user_data) {
+  lang_tap_state.state = cur_dance(state);
+  switch (lang_tap_state.state) {
+    case SINGLE_TAP: register_code(KC_LANG2); break;
+    case SINGLE_HOLD: register_code(KC_LGUI); break;
+    case DOUBLE_TAP: register_code(KC_LANG1); break;
   }
 }
 
-void dance_lang2_finished(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count == 1) {
-    if (state->pressed) register_code(KC_LGUI);
-  } else if (state->count == 2) register_code(KC_LANG2);
-}
-
-void dance_lang2_reset(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count == 1) {
-    unregister_code(KC_LGUI);
-  } else {
-    unregister_code(KC_LANG2);
+void dance_lang_reset(qk_tap_dance_state_t *state, void *user_data) {
+  switch (lang_tap_state.state) {
+    case SINGLE_TAP: unregister_code(KC_LANG2); break;
+    case SINGLE_HOLD: unregister_code(KC_LGUI); break;
+    case DOUBLE_TAP: unregister_code(KC_LANG1); break;
   }
+  lang_tap_state.state = 0;
 }
 
 qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_LANG1] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lang1_finished, dance_lang1_reset),
-  [TD_LANG2] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lang2_finished, dance_lang2_reset),
+  [TD_LANG_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_lang_finished, dance_lang_reset)
 };
