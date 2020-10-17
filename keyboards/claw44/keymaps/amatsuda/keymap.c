@@ -49,7 +49,7 @@ enum {
 
 #define KC_ KC_TRNS
 #define KC_RST RESET
-#define KC_L_SPC LT(_LOWER, KC_SPC) // lower
+#define LOWER_SPC LT(_LOWER, KC_SPC) // lower
 #define KC_R_ENT LT(_RAISE, KC_ENT) // raise
 #define LGUI_SPC LGUI_T(KC_SPC)  // LGUI, Space
 #define LANG_LGUI TD(TD_LANG_LGUI) // hold: cmd, single_tap: EN, double_tap: JA
@@ -69,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+---------+--------+---------+--------|   |--------+---------+--------+---------+--------+--------|
      KC_LSPO, KC_Z   , KC_X    , KC_C   , KC_V    , KC_B   ,     KC_N   , KC_M    , KC_COMM, KC_DOT  , KC_SLSH ,KC_RSPC,
   //`--------+--------+---------+--------+---------+--------/   \--------+---------+--------+---------+--------+--------'
-                       ALT_BS  ,LGUI_SPC, KC_L_SPC, LOWER  ,     MOUSE  , RAISE   , KC_UNDS, LANG_LGUI
+                       ALT_BS  ,LGUI_SPC,LOWER_SPC, LOWER  ,     MOUSE  , RAISE   , KC_UNDS, LANG_LGUI
   //                 `----------+--------+---------+--------'   `--------+---------+--------+---------'
   ),
 
